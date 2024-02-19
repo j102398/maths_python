@@ -1,0 +1,457 @@
+import tkinter as tk
+
+root = tk.Tk()
+root.geometry("400x400")
+
+
+# Define a function to clean the window:
+def clean_window(root):
+    for widget in root.winfo_children():
+        widget.destroy()
+
+
+####ACTUAL PROGRAM
+def create_matrix_window():
+    x1_entry_1 = tk.Entry(root, width=5)
+    x1_entry_1.grid(row=0, column=0)
+
+    x1_label = tk.Label(root, text="x  + ")
+    x1_label.grid(row=0, column=1)
+
+    y1_entry_1 = tk.Entry(root, width=5)
+    y1_entry_1.grid(row=0, column=2)
+
+    y1_label = tk.Label(root, text="y  +")
+    y1_label.grid(row=0, column=3)
+
+    z1_entry_1 = tk.Entry(root, width=5)
+    z1_entry_1.grid(row=0, column=4)
+
+    equals_1 = tk.Label(root, text="z  = ")
+    equals_1.grid(row=0, column=5)
+
+    total_1 = tk.Entry(root, width=5)
+    total_1.grid(row=0, column=6)
+
+    # Equation two
+    x2_entry_1 = tk.Entry(root, width=5)
+    x2_entry_1.grid(row=1, column=0)
+
+    x2_label = tk.Label(root, text="x  + ")
+    x2_label.grid(row=1, column=1)
+
+    y2_entry_1 = tk.Entry(root, width=5)
+    y2_entry_1.grid(row=1, column=2)
+
+    y2_label = tk.Label(root, text="y  +")
+    y2_label.grid(row=1, column=3)
+
+    z2_entry_1 = tk.Entry(root, width=5)
+    z2_entry_1.grid(row=1, column=4)
+
+    equals_2 = tk.Label(root, text="z  = ")
+    equals_2.grid(row=1, column=5)
+
+    total_2 = tk.Entry(root, width=5)
+    total_2.grid(row=1, column=6)
+
+    # Equation three
+    x3_entry_1 = tk.Entry(root, width=5)
+    x3_entry_1.grid(row=2, column=0)
+
+    x3_label = tk.Label(root, text="x  + ")
+    x3_label.grid(row=2, column=1)
+
+    y3_entry_1 = tk.Entry(root, width=5)
+    y3_entry_1.grid(row=2, column=2)
+
+    y3_label = tk.Label(root, text="y  +")
+    y3_label.grid(row=2, column=3)
+
+    z3_entry_1 = tk.Entry(root, width=5)
+    z3_entry_1.grid(row=2, column=4)
+
+    equals_3 = tk.Label(root, text="z  = ")
+    equals_3.grid(row=2, column=5)
+
+    total_3 = tk.Entry(root, width=5)
+    total_3.grid(row=2, column=6)
+    submit_button = tk.Button(root, text="Calculate", command=lambda: matrices(
+        x1_entry_1.get(), y1_entry_1.get(), z1_entry_1.get(), total_1.get(),
+        x2_entry_1.get(), y2_entry_1.get(), z2_entry_1.get(), total_2.get(),
+        x3_entry_1.get(), y3_entry_1.get(), z3_entry_1.get(), total_3.get()
+    ))
+    submit_button.grid(row=3, column=6)
+
+
+def matrices(a, b, c, product_a, d, e, f, product_b, g, h, i, product_c):
+    # Assemble a 3 x 3 matrix
+    coefficient_matrix = [
+        [a, b, c],
+        [d, e, f],
+        [g, h, i]
+    ]
+
+    # Assemble a 3 x 1 matrix
+    constant_matrix = [
+        [product_a],
+        [product_b],
+        [product_c]
+    ]
+
+    minor_matrix(coefficient_matrix, constant_matrix)
+
+
+def minor_matrix(coefficient_matrix, constant_matrix):
+    print("minor")
+    a = float(coefficient_matrix[0][0])
+    b = float(coefficient_matrix[0][1])
+    c = float(coefficient_matrix[0][2])
+    d = float(coefficient_matrix[1][0])
+    e = float(coefficient_matrix[1][1])
+    f = float(coefficient_matrix[1][2])
+    g = float(coefficient_matrix[2][0])
+    h = float(coefficient_matrix[2][1])
+    i = float(coefficient_matrix[2][2])
+
+    minor_a = (e * i) - (f * h)
+    minor_b = (d * i) - (f * g)
+    minor_c = (d * h) - (e * g)
+    minor_d = (b * i) - (c * h)
+    minor_e = (a * i) - (c * g)
+    minor_f = (a * h) - (b * g)
+    minor_g = (b * f) - (c * e)
+    minor_h = (a * f) - (c * d)
+    minor_i = (a * e) - (b * d)
+
+    minor_matrix = [
+        [minor_a, minor_b, minor_c],
+        [minor_d, minor_e, minor_f],
+        [minor_g, minor_h, minor_i]
+    ]
+
+    # Also return determinant
+    determinant = (a * minor_a) - (b * minor_b) + (c * minor_c)
+    cofactors_matrix(coefficient_matrix, constant_matrix, determinant, minor_matrix)
+
+
+def cofactors_matrix(coefficient_matrix, constant_matrix, determinant, minor_matrix):
+    # Flip the signs where necessary
+    # [+ - +]
+    # [- + -]
+    # [+ - +]
+    cofactors = [
+        [minor_matrix[0][0], -minor_matrix[0][1], minor_matrix[0][2]],
+        [-minor_matrix[1][0], minor_matrix[1][1], -minor_matrix[1][2]],
+        [minor_matrix[2][0], -minor_matrix[2][1], minor_matrix[2][2]]
+    ]
+    transpose_matrix(coefficient_matrix, constant_matrix, determinant, minor_matrix,cofactors)
+
+
+def transpose_matrix(coefficient_matrix, constant_matrix, determinant, minor_matrix,cofactors):
+    # Manually flip rows and columns for a 3x3 matrix
+    transposed_matrix = [
+        [cofactors[0][0], cofactors[1][0], cofactors[2][0]],
+        [cofactors[0][1], cofactors[1][1], cofactors[2][1]],
+        [cofactors[0][2], cofactors[1][2], cofactors[2][2]]
+    ]
+
+    divide_by_determinant(coefficient_matrix, constant_matrix, determinant, minor_matrix,cofactors,transposed_matrix)
+
+
+def divide_by_determinant(coefficient_matrix, constant_matrix, determinant, minor_matrix,cofactors,transposed_matrix):
+    # Check if the determinant is zero (matrix is singular)
+    if determinant == 0:
+        raise ValueError("Matrix is singular, and its inverse does not exist.")
+
+    inverse_matrix = [
+        [transposed_matrix[0][0] / determinant, transposed_matrix[0][1] / determinant,
+         transposed_matrix[0][2] / determinant],
+        [transposed_matrix[1][0] / determinant, transposed_matrix[1][1] / determinant,
+         transposed_matrix[1][2] / determinant],
+        [transposed_matrix[2][0] / determinant, transposed_matrix[2][1] / determinant,
+         transposed_matrix[2][2] / determinant]
+    ]
+
+    multiply_matrix(coefficient_matrix, constant_matrix, determinant, minor_matrix,cofactors,transposed_matrix,inverse_matrix)
+
+
+def multiply_matrix(coefficient_matrix, constant_matrix, determinant, minor_matrix,cofactors,transposed_matrix,inverse_matrix):
+    # Rename each bit of the inverse_matrix
+    # [a, b, c]
+    # [d, e, f]
+    # [g, h, i]
+    a = float(inverse_matrix[0][0])
+    b = float(inverse_matrix[0][1])
+    c = float(inverse_matrix[0][2])
+    d = float(inverse_matrix[1][0])
+    e = float(inverse_matrix[1][1])
+    f = float(inverse_matrix[1][2])
+    g = float(inverse_matrix[2][0])
+    h = float(inverse_matrix[2][1])
+    i = float(inverse_matrix[2][2])
+
+    # Rename each of the matrix_product to a1, b2, c3
+    # [a1]
+    # [b1]
+    # [c1]
+    a1 = float(constant_matrix[0][0])
+    b1 = float(constant_matrix[1][0])
+    c1 = float(constant_matrix[2][0])
+
+    # Product matrix in the form, as these values correspond to x, y, and z.
+    # [x]
+    # [y]
+    # [z]
+    x = (a * a1) + (b * b1) + (c * c1)
+    y = (d * a1) + (e * b1) + (f * c1)
+    z = (g * a1) + (h * b1) + (i * c1)
+
+    display_products(coefficient_matrix, constant_matrix, determinant, minor_matrix,cofactors,transposed_matrix,inverse_matrix,x,y,z)
+
+
+def display_products(coefficient_matrix, constant_matrix, determinant, minor_matrix,cofactors,transposed_matrix,inverse_matrix,x,y,z):
+    # Clear the window
+    clean_window(root)
+    # Round to a certain amount of dp because python doesn't use exact values during calculations
+
+    x = round(x, 3)
+    y = round(y, 3)
+    z = round(z, 3)
+    x_label = tk.Label(root, text=f"X = {x}", pady=4)
+    x_label.grid(row=0, column=0)
+
+    y_label = tk.Label(root, text=f"Y = {y}")
+    y_label.grid(row=1, column=0)
+
+    z_label = tk.Label(root, text=f"Z = {z}")
+    z_label.grid(row=2, column=0)
+
+    show_steps_button = tk.Button(root, text="Show Steps", pady=4, command=lambda: show_steps(coefficient_matrix, constant_matrix, determinant, minor_matrix,cofactors,transposed_matrix,inverse_matrix,x,y,z))
+    show_steps_button.grid(row=3, column=0)
+
+
+def show_steps(coefficient_matrix, constant_matrix, determinant, minor_matrix,cofactors,transposed_matrix,inverse_matrix,x,y,z):
+    clean_window(root)
+    explain_label = tk.Label(root, text="Express Equations as a system of matrices:", pady=1)
+    explain_label.grid(row=0, column=0)
+    # Split up the original 3x3 coefficient matrix into a, b, c, d, e, f, g, h, i
+    a = coefficient_matrix[0][0]
+    b = coefficient_matrix[0][1]
+    c = coefficient_matrix[0][2]
+    d = coefficient_matrix[1][0]
+    e = coefficient_matrix[1][1]
+    f = coefficient_matrix[1][2]
+    g = coefficient_matrix[2][0]
+    h = coefficient_matrix[2][1]
+    i = coefficient_matrix[2][2]
+
+    # Split the 3x1 constant matrix into j, k, l
+    j = constant_matrix[0][0]
+    k = constant_matrix[1][0]
+    l = constant_matrix[2][0]
+
+    equation_1 = f"{a}x + {b}y + {c}z = {j}"
+    equation_2 = f"{d}x + {e}y + {f}z = {k}"
+    equation_3 = f"{g}x + {h}y + {i}z = {l}"
+
+    equation_1_label = tk.Label(root, text=equation_1)
+    equation_2_label = tk.Label(root, text=equation_2)
+    equation_3_label = tk.Label(root, text=equation_3)
+
+    equation_1_label.grid(row=1, column=0)
+    equation_2_label.grid(row=2, column=0)
+    equation_3_label.grid(row=3, column=0)
+
+    # Put downwards arrow
+    arrow_label = tk.Label(root, text="↓", font=("Arial", 20))
+    arrow_label.grid(row=4, column=0)
+
+    # Put all in one string for formatting purposes
+    matrix_text = f'''
+    [{a} {b} {c}][x]   [{j}]
+    [{d} {e} {f}][y] = [{k}]
+    [{g} {h} {i}][z]   [{l}]'''
+
+    matrix_label = tk.Label(root, text=matrix_text)
+    matrix_label.grid(row=5, column=0)
+
+    # Put next step
+
+    #Create a variable showing what the matrix looks like before matrix of minors
+    previous_matrix = f'''
+    [{a} {b} {c}]
+    [{d} {e} {f}]
+    [{g} {h} {i}]'''
+
+    next_step_button = tk.Button(root, text="Next Step", command=lambda: explain_minor_matrix(coefficient_matrix,constant_matrix, determinant, minor_matrix,cofactors,transposed_matrix,inverse_matrix,x,y,z,previous_matrix))
+    next_step_button.grid(row=6, column=0)
+
+def explain_minor_matrix(coefficient_matrix,constant_matrix, determinant, minor_matrix,cofactors,transposed_matrix,inverse_matrix,x,y,z,previous_matrix):
+        clean_window(root)
+        explain_label = tk.Label(root, text="Create a new 3 x 3 of the minors and Find Determinant:", pady=1)
+        explain_label.grid(row=0, column=0)
+
+        previous_matrix = tk.Label(root,text=previous_matrix,pady=1)
+        previous_matrix.grid(row=1,column=0)
+
+        arrow_label = tk.Label(root, text="↓", font=("Arial", 20))
+        arrow_label.grid(row=2, column=0)
+
+        minor_matrix_text = f'''
+            [{minor_matrix[0][0]} {minor_matrix[0][1]} {minor_matrix[0][2]}]
+            [{minor_matrix[1][0]} {minor_matrix[1][1]} {minor_matrix[1][2]}]
+            [{minor_matrix[2][0]} {minor_matrix[2][1]} {minor_matrix[2][2]}]'''
+
+        minor_matrix_label = tk.Label(root,text=minor_matrix_text,pady=1)
+        minor_matrix_label.grid(row=3,column=0)
+
+        determinant_label = tk.Label(root,text=f"Determinant = {determinant}",pady=1)
+        determinant_label.grid(row=4,column=0)
+
+
+
+
+
+        next_step_button = tk.Button(root, text="Next Step",
+                                     command=lambda: explain_cofactor_matrix(coefficient_matrix,constant_matrix, determinant, minor_matrix,
+                                                                          cofactors, transposed_matrix, inverse_matrix,
+                                                                          x, y, z, minor_matrix_text))
+        next_step_button.grid(row=6, column=2)
+
+
+def explain_cofactor_matrix(coefficient_matrix,constant_matrix, determinant, minor_matrix,cofactors, transposed_matrix, inverse_matrix, x, y, z, minor_matrix_text):
+    clean_window(root)
+    explain_label = tk.Label(root, text="Form the matrix of cofactors:", pady=1)
+    explain_label.grid(row=0, column=0)
+
+
+
+    minor_matrix_label = tk.Label(root,text=minor_matrix_text,pady=1)
+    minor_matrix_label.grid(row=1,column=0)
+
+    arrow_label = tk.Label(root, text="↓", font=("Arial", 20))
+    arrow_label.grid(row=2, column=0)
+
+    cofactors_text = f'''
+        [{cofactors[0][0]} {cofactors[0][1]} {cofactors[0][2]}]
+        [{cofactors[1][0]} {cofactors[1][1]} {cofactors[1][2]}]
+        [{cofactors[2][0]} {cofactors[2][1]} {cofactors[2][2]}]'''
+
+    cofactors_matrix = tk.Label(root, text=cofactors_text, pady=1)
+    cofactors_matrix.grid(row=3, column=0)
+
+    next_step_button = tk.Button(root, text="Next Step",
+                                 command=lambda: explain_transposed_matrix(coefficient_matrix,constant_matrix, determinant, minor_matrix,
+                                                                         cofactors, transposed_matrix, inverse_matrix,
+                                                                         x, y, z, cofactors_text))
+    next_step_button.grid(row=4, column=2)
+
+
+def explain_transposed_matrix(coefficient_matrix,constant_matrix, determinant, minor_matrix,
+                                                                         cofactors, transposed_matrix, inverse_matrix,
+                                                                         x, y, z, cofactors_text):
+    clean_window(root)
+    explain_label = tk.Label(root, text="Transpose the matrix of cofactors:", pady=1)
+    explain_label.grid(row=0, column=0)
+
+    cofactors_matrix = tk.Label(root, text=cofactors_text, pady=1)
+    cofactors_matrix.grid(row=1, column=0)
+
+    arrow_label = tk.Label(root, text="↓", font=("Arial", 20))
+    arrow_label.grid(row=2, column=0)
+
+    transposed_matrix_text = f'''
+        [{transposed_matrix[0][0]} {transposed_matrix[0][1]} {transposed_matrix[0][2]}]
+        [{transposed_matrix[1][0]} {transposed_matrix[1][1]} {transposed_matrix[1][2]}]
+        [{transposed_matrix[2][0]} {transposed_matrix[2][1]} {transposed_matrix[2][2]}]'''
+
+    transposed_matrix_label = tk.Label(root,text=transposed_matrix_text,pady=1)
+    transposed_matrix_label.grid(row=3,column=0)
+
+    next_step_button = tk.Button(root, text="Next Step",
+                                 command=lambda: explain_inverse_matrix_text(coefficient_matrix,constant_matrix, determinant, minor_matrix,
+                                                                           cofactors, transposed_matrix, inverse_matrix,
+                                                                           x, y, z, transposed_matrix_text))
+    next_step_button.grid(row=3, column=1)
+
+def explain_inverse_matrix_text(coefficient_matrix,constant_matrix, determinant, minor_matrix,
+                                                                           cofactors, transposed_matrix, inverse_matrix,
+                                                                           x, y, z, transposed_matrix_text):
+    clean_window(root)
+    explain_label = tk.Label(root, text='Divide each element of the transposed\n matrix by the determinant:', pady=1)
+    explain_label.grid(row=0, column=0)
+
+    transposed_matrix_label = tk.Label(root,text=transposed_matrix_text,pady=1)
+    transposed_matrix_label.grid(row=2,column=0)
+
+    arrow_label = tk.Label(root, text="↓", font=("Arial", 20))
+    arrow_label.grid(row=3, column=0)
+
+
+
+
+    inverse_matrix_text = f'''
+    1   [{transposed_matrix[0][0]} {transposed_matrix[0][1]} {transposed_matrix[0][2]}]
+    --- [{transposed_matrix[1][0]} {transposed_matrix[1][1]} {transposed_matrix[1][2]}]
+    {determinant}  [{transposed_matrix[2][0]} {transposed_matrix[2][1]} {transposed_matrix[2][2]}]'''
+
+    inverse_matrix_label = tk.Label(root,text=inverse_matrix_text,pady=1)
+    inverse_matrix_label.grid(row=4,column=0)
+
+    next_step_button = tk.Button(root, text="Next Step",
+                                 command=lambda: explain_matrix_multiplication(coefficient_matrix,constant_matrix, determinant, minor_matrix,
+                                                                             cofactors, transposed_matrix,
+                                                                             inverse_matrix,
+                                                                             x, y, z, inverse_matrix_text))
+    next_step_button.grid(row=3, column=1)
+
+
+def explain_matrix_multiplication(coefficient_matrix,constant_matrix,determinant,minor_matrix,cofactors,transposed_matrix,inverse_matrix,x,y,z,inverse_matrix_text):
+    clean_window(root)
+    explain_label_1 = tk.Label(root, text='Multiply by the inverse matrix:', pady=1)
+    explain_label_1.grid(row=0, column=0)
+
+    left_hand_text = f'''
+      1   [{transposed_matrix[0][0]} {transposed_matrix[0][1]} {transposed_matrix[0][2]}][{coefficient_matrix[0][0]} {coefficient_matrix[0][1]} {coefficient_matrix[0][2]}][x]
+      --- [{transposed_matrix[1][0]} {transposed_matrix[1][1]} {transposed_matrix[1][2]}][{coefficient_matrix[1][0]} {coefficient_matrix[1][1]} {coefficient_matrix[1][2]}][y]
+      {determinant}  [{transposed_matrix[2][0]} {transposed_matrix[2][1]} {transposed_matrix[2][2]}][{coefficient_matrix[2][0]} {coefficient_matrix[2][1]} {coefficient_matrix[2][2]}][z]'''
+    left_hand_label  = tk.Label(root,text=left_hand_text,pady=1)
+    left_hand_label.grid(row=1,column=0)
+
+    right_hand_text = f'''
+        1   [{transposed_matrix[0][0]} {transposed_matrix[0][1]} {transposed_matrix[0][2]}]
+     =  --- [{transposed_matrix[1][0]} {transposed_matrix[1][1]} {transposed_matrix[1][2]}]
+        {determinant}  [{transposed_matrix[2][0]} {transposed_matrix[2][1]} {transposed_matrix[2][2]}]'''
+
+
+    right_hand_label = tk.Label(root,text=right_hand_text,pady=1)
+    right_hand_label.grid(row=1,column=1)
+
+    explain_label_2 = tk.Label(root,text="Multiply Left Hand side \n to give Identity Matrix:")
+    explain_label_2.grid(row=2,column=0)
+
+    left_hand_text_2 = '''
+    [100][x]
+    [010[[y] =
+    [001][z]'''
+    left_hand_label_2 = tk.Label(root,text=left_hand_text_2,pady=1)
+    left_hand_label_2.grid(row=3,column=0)
+
+    right_hand_text_2 = tk.Label(root,text=right_hand_text,pady=1)
+    right_hand_text_2.grid(row=3,column=1)
+
+    arrow_label = tk.Label(root, text="↓", font=("Arial", 20))
+    arrow_label.grid(row=4, column=0)
+
+    equation_text = f'''
+    [x]     [{x}]
+    [y] =   [{y}] 
+    [z]     [{z}]
+'''
+    equation_label = tk.Label(root,text=equation_text,pady=1)
+    equation_label.grid(row=5,column=0)
+#############
+create_matrix_window()
+root.mainloop()
+##############
