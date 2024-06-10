@@ -1,0 +1,152 @@
+class ThreeMatrix:
+    def __init__(self,rows):
+        self.a = rows[0][0]
+        self.b = rows[0][1]
+        self.c = rows[0][2]
+        self.d = rows[1][0]
+        self.e = rows[1][1]
+        self.f = rows[1][2]
+        self.g = rows[2][0]
+        self.h = rows[2][1]
+        self.i = rows[2][2]
+
+    def matrix_minors(self):
+        minor_a = round((self.e * self.i) - (self.f * self.h), 3)
+        minor_b = round((self.d * self.i) - (self.f * self.g), 3)
+        minor_c = round((self.d * self.h) - (self.e * self.g), 3)
+        minor_d = round((self.b * self.i) - (self.c * self.h), 3)
+        minor_e = round((self.a * self.i) - (self.c * self.g), 3)
+        minor_f = round((self.a * self.h) - (self.b * self.g), 3)
+        minor_g = round((self.b * self.f) - (self.c * self.e), 3)
+        minor_h = round((self.a * self.f) - (self.c * self.d), 3)
+        minor_i = round((self.a * self.e) - (self.b * self.d), 3)
+
+        minor_matrix = [
+            [minor_a, minor_b, minor_c],
+            [minor_d, minor_e, minor_f],
+            [minor_g, minor_h, minor_i]
+        ]
+
+
+        return minor_matrix
+
+    def display_matrix_minors(self):
+        matrix_minors = self.matrix_minors()
+        matrix_minors_formatted = (f'''
+        [{matrix_minors[0][0]}   {matrix_minors[0][1]}  {matrix_minors[0][2]}]
+        [{matrix_minors[1][0]}   {matrix_minors[1][1]}  {matrix_minors[1][2]}]
+        [{matrix_minors[2][0]}   {matrix_minors[2][1]}  {matrix_minors[2][2]}]''')
+
+        return f"Matrix of minors: {matrix_minors_formatted}"
+
+    def determinant(self):
+        minor_matrix = self.matrix_minors()
+        determinant = (minor_matrix[0][0]) - (minor_matrix[0][1]) + (minor_matrix[0][2])
+        return determinant
+
+    def display_determinant(self):
+        determinant = self.determinant()
+        return f"Determinant : {determinant}"
+
+
+    def matrix_cofactors(self):
+        matrix_minors = self.matrix_minors()
+        cofactors_a = matrix_minors[0][0]
+        cofactors_b = -(matrix_minors[0][1])
+        cofactors_c = matrix_minors[0][2]
+        cofactors_d = -(matrix_minors[1][0])
+        cofactors_e = matrix_minors[1][1]
+        cofactors_f = -(matrix_minors[1][2])
+        cofactors_g = matrix_minors[2][0]
+        cofactors_h = -(matrix_minors[2][1])
+        cofactors_i = matrix_minors[2][2]
+
+        matrix_cofactors = ([
+            [cofactors_a,cofactors_b,cofactors_c],
+            [cofactors_d,cofactors_e,cofactors_f],
+            [cofactors_g,cofactors_h,cofactors_i]
+        ])
+        return matrix_cofactors
+
+    def display_matrix_cofactors(self):
+        matrix_cofactors = self.matrix_minors()
+        matrix_minors_formatted = (f'''
+        [{matrix_cofactors[0][0]}   {matrix_cofactors[0][1]}  {matrix_cofactors[0][2]}]
+        [{matrix_cofactors[1][0]}   {matrix_cofactors[1][1]}  {matrix_cofactors[1][2]}]
+        [{matrix_cofactors[2][0]}   {matrix_cofactors[2][1]}  {matrix_cofactors[2][2]}]''')
+
+        return f"Matrix of Cofactors: {matrix_minors_formatted}"
+
+    def matrix_transposed(self):
+        matrix_cofactors = self.matrix_cofactors()
+        transposed_a = matrix_cofactors[0][0]
+        transposed_b = matrix_cofactors[1][0]
+        transposed_c = matrix_cofactors[2][0]
+        transposed_d = matrix_cofactors[0][1]
+        transposed_e = matrix_cofactors[1][1]
+        transposed_f = matrix_cofactors[2][1]
+        transposed_g = matrix_cofactors[0][2]
+        transposed_h = matrix_cofactors[1][2]
+        transposed_i = matrix_cofactors[2][2]
+
+        matrix_transposed = ([
+            [transposed_a,transposed_b,transposed_c],
+            [transposed_d,transposed_e,transposed_f],
+            [transposed_g,transposed_h,transposed_i]
+        ])
+        return matrix_transposed
+
+    def display_matrix_transposed(self):
+        matrix_transposed = self.matrix_minors()
+        matrix_transposed_formatted = (f'''
+              [{matrix_transposed[0][0]}   {matrix_transposed[0][1]}  {matrix_transposed[0][2]}]
+              [{matrix_transposed[1][0]}   {matrix_transposed[1][1]}  {matrix_transposed[1][2]}]
+              [{matrix_transposed[2][0]}   {matrix_transposed[2][1]}  {matrix_transposed[2][2]}]''')
+
+        return f"Matrix of Cofactors: {matrix_transposed_formatted}"
+
+    def inverse_matrix(self):
+        matrix_transposed = self.matrix_transposed()
+        determinant = self.determinant()
+        if determinant == 0:
+            return f"As determinant is 0, matrix cannot be inversed"
+        else:
+            inverse_matrix_a = round(matrix_transposed[0][0] / determinant, 3)
+            inverse_matrix_b = round(matrix_transposed[0][1] / determinant, 3)
+            inverse_matrix_c = round(matrix_transposed[0][2] / determinant, 3)
+            inverse_matrix_d = round(matrix_transposed[1][0] / determinant, 3)
+            inverse_matrix_e = round(matrix_transposed[1][1] / determinant, 3)
+            inverse_matrix_f = round(matrix_transposed[1][2] / determinant, 3)
+            inverse_matrix_g = round(matrix_transposed[2][0] / determinant, 3)
+            inverse_matrix_h = round(matrix_transposed[2][1] / determinant, 3)
+            inverse_matrix_i = round(matrix_transposed[2][2] / determinant, 3)
+
+            inverse_matrix = ([
+                [inverse_matrix_a, inverse_matrix_b, inverse_matrix_c],
+                [inverse_matrix_d, inverse_matrix_e, inverse_matrix_f],
+                [inverse_matrix_g, inverse_matrix_h, inverse_matrix_i]
+            ])
+            return inverse_matrix
+
+    def display_inverse_matrix(self):
+        inverse_matrix = self.inverse_matrix()
+        return f"Inverse matrix: {inverse_matrix}"
+
+#replace with values
+matrix = ([
+    [1,2,3],
+    [4,5,6],
+    [7,8,9]
+])
+
+matrix = ThreeMatrix(matrix)
+
+print(matrix.display_matrix_minors())
+print("")
+print(matrix.display_determinant())
+print("")
+print(matrix.display_matrix_cofactors())
+print("")
+print(matrix.display_matrix_transposed())
+print("")
+print(matrix.display_inverse_matrix())
