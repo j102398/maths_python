@@ -69,13 +69,13 @@ class ThreeMatrix:
         return matrix_cofactors
 
     def display_matrix_cofactors(self):
-        matrix_cofactors = self.matrix_minors()
-        matrix_minors_formatted = (f'''
+        matrix_cofactors = self.matrix_cofactors()
+        matrix_cofactors_formatted = (f'''
         [{matrix_cofactors[0][0]}   {matrix_cofactors[0][1]}  {matrix_cofactors[0][2]}]
         [{matrix_cofactors[1][0]}   {matrix_cofactors[1][1]}  {matrix_cofactors[1][2]}]
         [{matrix_cofactors[2][0]}   {matrix_cofactors[2][1]}  {matrix_cofactors[2][2]}]''')
 
-        return f"Matrix of Cofactors: {matrix_minors_formatted}"
+        return f"Matrix of Cofactors: {matrix_cofactors_formatted}"
 
     def matrix_transposed(self):
         matrix_cofactors = self.matrix_cofactors()
@@ -97,13 +97,13 @@ class ThreeMatrix:
         return matrix_transposed
 
     def display_matrix_transposed(self):
-        matrix_transposed = self.matrix_minors()
+        matrix_transposed = self.matrix_transposed()
         matrix_transposed_formatted = (f'''
               [{matrix_transposed[0][0]}   {matrix_transposed[0][1]}  {matrix_transposed[0][2]}]
               [{matrix_transposed[1][0]}   {matrix_transposed[1][1]}  {matrix_transposed[1][2]}]
               [{matrix_transposed[2][0]}   {matrix_transposed[2][1]}  {matrix_transposed[2][2]}]''')
 
-        return f"Matrix of Cofactors: {matrix_transposed_formatted}"
+        return f"Matrix Transposed: {matrix_transposed_formatted}"
 
     def inverse_matrix(self):
         matrix_transposed = self.matrix_transposed()
