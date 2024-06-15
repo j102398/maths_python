@@ -1,15 +1,39 @@
+#constants
+pi  = 3.141592653589793
 
-#CALCULUS
-def differentiation(x):
+#using simpsons rule
+def integration(f,a,b):
+    #assume that 1000 intervals is good enough
+    n = 1000
+    width = (b-a) / n
 
-    #using numerical differentiation
-    def f(x):
-        output = cos(x)
-        return output
+    #integral approximation according to simpsons rule
+    integral = f(a) + f(b)
+    for i in range (1,n,2):
+        x_odd = a + (i*width)
+        area = 4 * f(x_odd)
+        integral += area
 
+    for i in range(2,n,2):
+        x_even = a + (i*width)
+        area = 2 * f(x_even)
+        integral += area
+
+    integral *= width / 3
+
+
+    return integral
+
+
+def differentiation(f, x):
     h = 0.00001
-    output = ((f(x+h) - f(x-h)) / (2*h))
-
+    output = ((f(x + h) - f(x - h)) / (2 * h))
     return output
 
-print(differentiation(pi))
+
+
+#define the function here
+def f(x):
+    return (x**3) - (5*x) + (x**2)
+
+
