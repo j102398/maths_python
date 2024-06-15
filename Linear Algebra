@@ -136,7 +136,27 @@ class ThreeMatrix:
     [{round(inverse_matrix[2][0], 3)}   {round(inverse_matrix[2][1], 3)}  {round(inverse_matrix[2][2], 3)}]''')
 
       return f"Inverse matrix:{inverse_matrix_formatted}"
-#replace with values
+
+
+def normal_vector(direction_vector_1,direction_vector_2):
+    #We are going to use the cross product to determine the normal vector
+    #The matrix determinant method
+    i_1,j_1,k_1 = direction_vector_1
+    i_2,j_2,k_2 = direction_vector_2
+
+    # Compute components of the normal vector using cross product formula
+    normal_i = (j_1 * k_2) - (k_1 * j_2)
+    normal_j = -(i_1 * k_2 - k_1 * i_2)
+    normal_k = (i_1 * j_2) - (j_1 * i_2)
+
+    # Return the normal vector
+
+
+    return f"Normal vector is {normal_i}i + {normal_j}j + {normal_k}k"
+
+
+
+### matrix example
 matrix = ([
   [1,2,3],
   [1,5,6],
@@ -154,3 +174,14 @@ print("")
 print(matrix.display_matrix_transposed())
 print("")
 print(matrix.display_inverse_matrix())
+
+
+
+
+
+
+
+#vector example
+vector_1 = [3,-1,2]
+vector_2 = [1,4,0]
+print(normal_vector(vector_1,vector_2))
