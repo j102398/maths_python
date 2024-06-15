@@ -1,0 +1,70 @@
+def factorial(number):
+    if number == 0:
+        return 1
+    else:
+        total = 1
+        for i in range(number, 0, -1):
+            total *= i
+
+        return total
+
+
+####TRIG
+def sin(x):
+    approx_value = x
+    iteration_counter = 0
+    for r in range(3, 50, 2):
+        iteration_counter += 1
+        if iteration_counter % 2 == 0:
+            approx_value += ((x ** (r)) / (factorial(r)))
+        else:
+            approx_value -= ((x ** (r)) / (factorial(r)))
+
+    return approx_value
+
+def cos(x):
+        approx_value = 1
+        iteration_counter = 0
+        for r in range(2, 50, 2):
+            iteration_counter += 1
+            if iteration_counter % 2 == 0:
+                approx_value += ((x ** (r)) / (factorial(r)))
+            else:
+                approx_value -= ((x ** (r)) / (factorial(r)))
+
+        return approx_value
+
+def tan(x):
+        #Using the identity sin x / cosx = tanx
+        approx_value = sin(x) / tan(x)
+        return approx_value
+
+def cosec(x):
+    approx_value = 1 / sin(x)
+
+def sec(x):
+    approx = 1 / tan(x)
+def cot(x):
+    approx_value = 1 / tan(x)
+    return approx_value
+
+#CALCULUS
+def differentiation(x):
+
+    #using numerical differentiation
+    def f(x):
+        output = sin(x)
+        return output
+
+    h = 0.00001
+    output = (f(x+h) - f(x-h)) / (2*h)
+
+    return output
+
+def e(x):
+    approx_value = 1 + x
+    for r in range(2,100):
+        approx_value += (x**r) / (factorial(r))
+    return approx_value
+
+print(e(9))
