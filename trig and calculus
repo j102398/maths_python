@@ -1,3 +1,4 @@
+#Miscellaneous
 def factorial(number):
     if number == 0:
         return 1
@@ -8,8 +9,17 @@ def factorial(number):
 
         return total
 
+##Constants
+e = 2.718281828459045
+pi = 3.141592653589793
+
+
 
 ####TRIG
+
+def radians(degrees):
+    radians = degrees * (pi / 180)
+    return radians
 def sin(x):
     approx_value = x
     iteration_counter = 0
@@ -36,35 +46,36 @@ def cos(x):
 
 def tan(x):
         #Using the identity sin x / cosx = tanx
-        approx_value = sin(x) / tan(x)
+        approx_value = sin(x) / cos(x)
         return approx_value
 
 def cosec(x):
     approx_value = 1 / sin(x)
+    return approx_value
 
 def sec(x):
     approx = 1 / tan(x)
+    return approx
+
 def cot(x):
     approx_value = 1 / tan(x)
     return approx_value
+
+
+
+
 
 #CALCULUS
 def differentiation(x):
 
     #using numerical differentiation
     def f(x):
-        output = sin(x)
+        output = cos(x)
         return output
 
     h = 0.00001
-    output = (f(x+h) - f(x-h)) / (2*h)
+    output = ((f(x+h) - f(x-h)) / (2*h))
 
     return output
 
-def e(x):
-    approx_value = 1 + x
-    for r in range(2,100):
-        approx_value += (x**r) / (factorial(r))
-    return approx_value
-
-print(e(9))
+print(differentiation(pi))
