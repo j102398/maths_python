@@ -1,0 +1,124 @@
+#Miscellaneous
+def factorial(number):
+    if number == 0:
+        return 1
+    else:
+        total = 1
+        for i in range(number, 0, -1):
+            total *= i
+
+        return total
+
+def ncr(n,r):
+    ncr = ((factorial(n)) / (factorial(r) * factorial(n-r)))
+    return ncr
+##Constants
+e = 2.718281828459045
+
+
+#Binomial distribution
+class Binomial: # X ~ B(n,p)
+    def __init__(self,n,p):
+
+        self.n = n  # number of trials
+        self.p = p   #probnability of success per trial
+
+    def mean(self):
+        mean = self.n * self.p
+        return mean
+    def variance(self):
+        variance = (self.n*self.p)*(1-self.p)
+        return variance
+
+    def bpd(self,x):  #P(X=x)
+        probability = (ncr(self.n,x)) * (self.p ** x) * ((1-self.p) ** (self.n-x))
+        return probability
+
+    def bcd(self,lower_x,upper_x):
+        probability = 0
+        for x in range(lower_x,upper_x + 1): #loop between lower x value and upper x value
+            probability += self.bpd(x)
+        return probability
+
+#poisson distribution
+class Poisson: # X ~ Po(λ)
+    def __init__(self,lambda_value):
+        self.lambda_value = lambda_value
+    def mean(self):
+        return self.lambda_value
+    def variance(self):
+        return self.lambda_value
+
+    def ppd(self,x): # P(X=x)
+        probability = (e**(-self.lambda_value)) * ((self.lambda_value ** x) / factorial(x))
+        return probability
+
+    def pcd(self,lower_x,upper_x):
+        probability = 0
+        for x in range(lower_x,upper_x + 1): #loop between lower x value and upper x value
+            probability += self.ppd(x)
+        return probability
+
+#geometric distribution
+class Geometric: # X ~ Geo(p)
+    def __init__(self,p):
+
+        self.p = p
+
+    def mean(self):
+        mean = 1 / self.p
+        return mean
+    def variance(self):
+        variance = (1-self.p) / (self.p ** 2)
+        return variance
+
+    def gpd(self, x):
+        if x == 0:
+            probability = 0
+        else:
+            probability = self.p * ((1 - self.p) ** (x - 1))
+
+        return probability
+
+    def gcd(self, lower_x, upper_x):
+        probability = 0
+        for x in range(lower_x, upper_x + 1):  # loop between lower x value and upper x value
+            probability += self.gpd(x)
+        return probability
+
+#negative binomial distribution
+class NegativeBinomial: # X ~ NB(r,p)
+    def __init__(self,r,p):
+        self.r = r
+        self.p = p
+
+    def mean(self):
+        mean = self.r / self.p
+        return mean
+
+    def variance(self):
+        variance = ((self.r*(1-self.p)) / (self.p **2))
+        return variance
+
+    def nbpd(self, x):
+        probability = (ncr((x - 1), (self.r - 1))) * (self.p ** self.r) * ((1 - self.p) ** (x - self.r))
+        return probability
+
+    def nbcd(self,lower_x,upper_x):
+        probability = 0
+        for x in range(lower_x, upper_x + 1):  # loop between lower x value and upper x value
+            probability += self.nbpd(x)
+        return probability
+
+
+#Example usage
+
+heads = Binomial(7,0.5)
+print(f"The probability of getting 5 heads from 7 flips is {round(heads.bpd(5),4)}")
+buses = Poisson(7)
+print(f"\nThe probability of getting less than 7 buses in an hour when there is an average of 7 per hour is  {round(buses.pcd(0,6),4)}")
+goals = Geometric((27/34))
+print(f"\nErling haaland scored 27 goals in 31 games last season. The probability of him not scoring a goal for  four games is {round(goals.gpd(4),4)}")
+questions = NegativeBinomial(10,0.4)
+print(f"\nA student does maths questions until he gets 10 right.The probability of him completing 10 correct on his 19th question is {round(questions.nbpd(19),4)}")
+
