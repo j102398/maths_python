@@ -77,6 +77,31 @@ class EC2D:     #Elastic Collisions in 2d
         angle_2 = arctan(self.vertical_components()/self.horizontal_components()) # this is given in radians
         angle_of_deflection = degrees(angle_2) + self.angle_of_approach
         return angle_of_deflection
+
+class Elastic:
+    def __init__(self,modulus_of_elasticity,extension,natural_length):
+        self.modulus_of_elasticity = modulus_of_elasticity
+        self.extension = extension
+        self.natural_length = natural_length
+
+    def tension(self):
+        tension = (self.modulus_of_elasticity * self.extension) / self.natural_length
+        return tension
+
+    def epe(self):
+        epe = ((self.modulus_of_elasticity) * (self.extension**2)) / (2 * self.natural_length) #epe measured in Joules
+        return epe
+
+class EC1D:
+    def __init__(self,initial_velocity,coefficient_of_restitution,mass):
+        self.inital_velocity = initial_velocity
+        self.coefficient_of_restitution = coefficient_of_restitution
+        self.mass = mass
+    
+
 ex1 = EC2D(36.86989765,1/3,1)
-print(ex1.speed_of_rebound() )
+print(ex1.speed_of_rebound()
 print(ex1.angle_of_deflection())
+
+a = Elastic(6,0.2,1.4)
+print(a.epe())
