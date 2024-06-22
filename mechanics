@@ -1,4 +1,4 @@
-# Miscellaneous and constants
+# Miscellaneous fucntions and constants
 def factorial(number):
     if number == 0:
         return 1
@@ -20,41 +20,61 @@ def magnitude(number):
 e = 2.718281828459045
 pi = 3.141592653589793
 
-class SimultaneousEquation2:
-    def __init__(self, x1, y1, z1, x2, y2, z2):
-        # assign variables so we can later on make a matrix
-        self.x1 = x1
-        self.y1 = y1
-        self.z1 = z1
-        self.x2 = x2
-        self.y2 = y2
-        self.z2 = z2
-
-    def assemble_matrix(self):  # assemble a matrix for the rhs, as the lhs will cancel upon multiplication with inverse
-        rhs = [[self.z1], [self.z2]]
-        return rhs
+class TwoMatrix:
+    def __init__(self,rows):
+        self.a = rows[0][0]
+        self.b = rows[0][1]
+        self.c = rows[1][0]
+        self.d = rows[1][1]
 
     def determinant(self):
-        output = (self.x1 * self.y2) - (self.y1 * self.x2)
-        return output
+        return (self.a * self.d) - (self.b * self.c)
 
     def inverse_matrix(self):
-        determinant = self.determinant()
-        new_x1 = self.y2 / determinant
-        new_y1 = (-1 * self.y1) / determinant
-        new_x2 = (-1 * self.x2) / determinant
-        new_y2 = self.x1 / determinant
-        # assemble the inverse matrix
-        new_matrix = [[new_x1, new_y1], [new_x2, new_y2]]
-        return new_matrix
+        if self.determinant() == 0:
+            return "Matrix cannot be inverted as determinant is 0"
+        else:
+            new_a = self.d / self.determinant()
+            new_b = (-1 * self.b) / self.determinant()
+            new_c = (-1 * self.c) / self.determinant()
+            new_d = self.a / self.determinant()
+            # assemble the inverse matrix
+            new_matrix = (
+                [new_a, new_b],
+                [new_c, new_d])
+            return new_matrix
+
+
+class SimultaneousEquation2:
+    def __init__(self, equation_1, equation_2):
+        # assign variables so we can later on make a matrix
+        self.x1 = equation_1[0]
+        self.y1 = equation_1[1]
+        self.z1 = equation_1[2]
+        self.x2 = equation_2[0]
+        self.y2 = equation_2[1]
+        self.z2 = equation_2[2]
+
+    def assemble_matrix(self):  # assemble a matrix for the rhs, as the lhs will cancel upon multiplication with inverse
+        rhs = (
+            [self.z1],
+            [self.z2])
+        return rhs
+
 
     def solve_equation(self):
-        inv_mat = self.inverse_matrix()
+        #assemble lhs into a 2x2 matrix
+        lhs = ([
+            [self.x1,self.y1],
+            [self.x2,self.y2]
+        ])
+        lhs_mat = TwoMatrix(lhs)
+
+        inv_mat = lhs_mat.inverse_matrix()
         rhs_mat = self.assemble_matrix()
         x = (inv_mat[0][0] * rhs_mat[0][0]) + (inv_mat[0][1] * rhs_mat[1][0])
         y = (inv_mat[1][0] * rhs_mat[0][0]) + (inv_mat[1][1] * rhs_mat[1][0])
         return x, y
-
 
 #Trig
 
@@ -111,6 +131,56 @@ def arctan(x, num_terms=10):
 
 ## MECHANICS
 
+
+class Elastic:
+    def __init__(self, modulus_of_elasticity, extension, natural_length):
+        self.modulus_of_elasticity = modulus_of_elasticity
+        self.extension = extension
+        self.natural_length = natural_length
+
+    def tension(self):
+        tension = (self.modulus_of_elasticity * self.extension) / self.natural_length
+        return tension
+
+    def epe(self):
+        epe = ((self.modulus_of_elasticity) * (self.extension ** 2)) / (
+                    2 * self.natural_length)  # epe measured in Joules
+        return epe
+
+class EC1D: #Assuming 🡪 is positive velocity ( as we are dealing with velocities not speed)
+
+    def __init__(self, initial_velocity, coefficient_of_restitution, mass):
+        self.inital_velocity = initial_velocity
+        self.coefficient_of_restitution = coefficient_of_restitution
+        self.mass = mass
+
+    def collision_with_object(self,second_initial_velocity,second_mass):
+        #assume the first object to have the positive velocity
+        x1,y1,z1= self.restitution_equation(second_initial_velocity)
+        x2,y2,z2 = self.clm(second_initial_velocity,second_mass)
+        #assemble a 2x2 matrix to solve the equation
+        matrix = SimultaneousEquation2([x1,y1,z1],[x2,y2,z2])
+        v1,v2 =  (matrix.solve_equation())
+        return (f"Assuming that 🡪 is the positive direction,v1 = {v1} , v2 = {v2}")
+
+    def collision_with_plane(self):
+        #Assuming 🡪 is positive velocity ( as we are dealing with velocities not speed)
+        speed_of_rebound = (self.inital_velocity) * (self.coefficient_of_restitution)
+        return speed_of_rebound
+
+    def restitution_equation(self,second_initial_velocity):
+        #assume the first object to have the positive velocity
+        z1 = magnitude(second_initial_velocity - self.inital_velocity ) * self.coefficient_of_restitution
+        #assuming the two objects are going in the same direction
+        # -v1 + v2 = (-u1 + u2)e
+        return -1,1,z1
+
+    def clm(self,second_initial_velocity,second_mass):
+        z2 = (self.inital_velocity * self.mass) + (second_initial_velocity * second_mass)
+        x2 = self.mass
+        y2 = second_mass
+        return x2,y2,z2
+
 class EC2D:  # Elastic Collisions in 2d
     def __init__(self, angle_of_approach, coefficient_of_restitution, speed_of_approach):
         self.angle_of_approach = angle_of_approach
@@ -135,59 +205,14 @@ class EC2D:  # Elastic Collisions in 2d
         return angle_of_deflection
 
 
-class Elastic:
-    def __init__(self, modulus_of_elasticity, extension, natural_length):
-        self.modulus_of_elasticity = modulus_of_elasticity
-        self.extension = extension
-        self.natural_length = natural_length
-
-    def tension(self):
-        tension = (self.modulus_of_elasticity * self.extension) / self.natural_length
-        return tension
-
-    def epe(self):
-        epe = ((self.modulus_of_elasticity) * (self.extension ** 2)) / (
-                    2 * self.natural_length)  # epe measured in Joules
-        return epe
-
-
-class EC1D: #Assuming 🡪 is positive velocity ( as we are dealing with velocities not speed)
-
-    def __init__(self, initial_velocity, coefficient_of_restitution, mass):
-        self.inital_velocity = initial_velocity
-        self.coefficient_of_restitution = coefficient_of_restitution
-        self.mass = mass
-
-    def collision_with_object(self,second_initial_velocity,second_mass):
-        #assume the first object to have the positive velocity
-        x1,y1,z1 = self.restitution_equation(second_initial_velocity)
-        x2,y2,z2 = self.clm(second_initial_velocity,second_mass)
-        #assemble a 2x2 matrix to solve the equation
-        matrix = SimultaneousEquation2(x1,y1,z1,x2,y2,z2)
-        v1,v2 =  (matrix.solve_equation())
-        return (f"Assuming that 🡪 is the positive direction,v1 = {v1} , v2 = {v2}")
-
-    def collision_with_plane(self):
-        #Assuming 🡪 is positive velocity ( as we are dealing with velocities not speed)
-        speed_of_rebound = (self.inital_velocity) * (self.coefficient_of_restitution)
-        return speed_of_rebound
-
-    def restitution_equation(self,second_initial_velocity):
-        #assume the first object to have the positive velocity
-        z1 = magnitude(second_initial_velocity - self.inital_velocity ) * self.coefficient_of_restitution
-        #assuming the two objects are going in the same direction
-        # -v1 + v2 = (-u1 + u2)e
-        return -1,1,z1
-
-    def clm(self,second_initial_velocity,second_mass):
-        z2 = (self.inital_velocity * self.mass) + (second_initial_velocity * second_mass)
-        x2 = self.mass
-        y2 = second_mass
-        return x2,y2,z2
 
 
 
+#question 4 exercise 4a further mechanics 1 workbook edexcel a level
+question_4= EC1D(4,0.2,2)
+print(question_4.collision_with_object(-6,6))
 
-
-b= EC1D(4,0.2,2)
-print(b.collision_with_plane())
+#example 1 chapter 5 further mechanics 1 workbook edexcel a level
+example_1 = EC2D(60,0.25,1)
+print(f"Speed of rebound is : {round(example_1.speed_of_rebound(),5)}")
+print(f"Angle of deflection is : {round(example_1.angle_of_deflection(),5)}")
