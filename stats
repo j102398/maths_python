@@ -14,6 +14,15 @@ def ncr(n,r):
     return ncr
 ##Constants
 e = 2.718281828459045
+pi  = 3.141592653589793
+
+def magnitude(number):
+    if number < 0:
+        number *= -1
+        return number
+    else:
+        return number
+
 
 
 #Binomial distribution
@@ -40,6 +49,25 @@ class Binomial: # X ~ B(n,p)
             probability += self.bpd(x)
         return probability
 
+    def invb(self,area): #area should be a p value
+        #will find out p(x≤k) = area
+
+        probability_list = []
+        for k in range(0,self.n+1):
+            probability_list.append(self.bcd(0,k))
+
+        #Find out list of differences between p and desired p
+        difference_list = []
+        for probability in probability_list:
+            difference_list.append(magnitude(area - probability))
+        smallest_difference = min(difference_list)
+        print(difference_list)
+        return difference_list.index(smallest_difference)
+
+
+
+
+
 #poisson distribution
 class Poisson: # X ~ Po(λ)
     def __init__(self,lambda_value):
@@ -58,6 +86,25 @@ class Poisson: # X ~ Po(λ)
         for x in range(lower_x,upper_x + 1): #loop between lower x value and upper x value
             probability += self.ppd(x)
         return probability
+
+    def invp(self,area): #area should be a p value
+
+        #find out p(x≤k) = area
+
+        probability_list = []
+
+        #assuming testing 100 values above the mean will be good  enough (unlike the binomial, there are not a fixed n of trials)
+        upper_bound = self.mean() + 101
+        for k in range(0,upper_bound):
+            probability_list.append(self.pcd(0,k))
+
+        #Find out list of differences between p and desired p
+        difference_list = []
+        for probability in probability_list:
+            difference_list.append(magnitude(area - probability))
+        smallest_difference = min(difference_list)
+        return difference_list.index(smallest_difference),self.pcd(0,difference_list.index(smallest_difference))
+
 
 #geometric distribution
 class Geometric: # X ~ Geo(p)
@@ -86,6 +133,24 @@ class Geometric: # X ~ Geo(p)
             probability += self.gpd(x)
         return probability
 
+    def invg(self,area): #area should be a p value
+
+        #find out p(x≤k) = area
+
+        probability_list = []
+
+        #assuming testing 100 values above the mean will be good  enough (unlike the binomial, there are not a fixed n of trials)
+        upper_bound = round(self.mean() + 101) #round to make it an integer, as geometric dist only takes discrete values
+        for k in range(0,upper_bound):
+            probability_list.append(self.gcd(0,k))
+
+        #Find out list of differences between p and desired p
+        difference_list = []
+        for probability in probability_list:
+            difference_list.append(magnitude(area - probability))
+        smallest_difference = min(difference_list)
+        return difference_list.index(smallest_difference),self.gcd(0,difference_list.index(smallest_difference))
+
 #negative binomial distribution
 class NegativeBinomial: # X ~ NB(r,p)
     def __init__(self,r,p):
@@ -110,15 +175,22 @@ class NegativeBinomial: # X ~ NB(r,p)
             probability += self.nbpd(x)
         return probability
 
+    def invnb(self,area): #area should be a p value
 
-#Example usage
+        #find out p(x≤k) = area
 
-heads = Binomial(7,0.5)
-print(f"The probability of getting 5 heads from 7 flips is {round(heads.bpd(5),4)}")
-buses = Poisson(7)
-print(f"\nThe probability of getting less than 7 buses in an hour when there is an average of 7 per hour is  {round(buses.pcd(0,6),4)}")
-goals = Geometric((27/34))
-print(f"\nErling haaland scored 27 goals in 31 games last season. The probability of him not scoring a goal for  four games is {round(goals.gpd(4),4)}")
-questions = NegativeBinomial(10,0.4)
-print(f"\nA student does maths questions until he gets 10 right.The probability of him completing 10 correct on his 19th question is {round(questions.nbpd(19),4)}")
+        probability_list = []
+
+        #assuming testing 100 values above the mean will be good  enough (unlike the binomial, there are not a fixed n of trials)
+        upper_bound = round(self.mean() + 101) #round to make it an integer, as geometric dist only takes discrete values
+        for k in range(0,upper_bound):
+            probability_list.append(self.nbcd(0,k))
+
+        #Find out list of differences between p and desired p
+        difference_list = []
+        for probability in probability_list:
+            difference_list.append(magnitude(area - probability))
+        smallest_difference = min(difference_list)
+        return difference_list.index(smallest_difference),self.nbcd(0,difference_list.index(smallest_difference))
+
 
