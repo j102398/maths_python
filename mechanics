@@ -182,37 +182,49 @@ class EC1D: #Assuming 🡪 is positive velocity ( as we are dealing with velocit
         return x2,y2,z2
 
 class EC2D:  # Elastic Collisions in 2d
-    def __init__(self, angle_of_approach, coefficient_of_restitution, speed_of_approach):
+    def __init__(self, angle_of_approach, coefficient_of_restitution, velocity_of_approach,mass):
         self.angle_of_approach = angle_of_approach
         self.e = coefficient_of_restitution
-        self.u = speed_of_approach  # u is initial velocity
+        self.u = velocity_of_approach  # u is initial velocity
+        self.mass = mass
 
-    def horizontal_components(self):
-        horizontal = self.u * cos(radians(self.angle_of_approach))
-        return horizontal
-
-    def vertical_components(self):
-        vertical = self.u * sin(radians(self.angle_of_approach)) * self.e
-        return vertical
-
-    def speed_of_rebound(self):
-        speed = ((self.horizontal_components() ** 2) + (self.vertical_components() ** 2)) ** 0.5
-        return speed
-
-    def angle_of_deflection(self):
-        angle_2 = arctan(self.vertical_components() / self.horizontal_components())  # this is given in radians
-        angle_of_deflection = degrees(angle_2) + self.angle_of_approach
-        return angle_of_deflection
+    def collision_with_wall(self):
+        #Calculate speed of deflection, using magnitudes as we are dealing with speeds
+        vertical_component = magnitude(self.u * sin(radians(self.angle_of_approach)) * self.e)
+        horizontal_component = magnitude(self.u * cos(radians(self.angle_of_approach)))
+        speed_of_deflection = ((vertical_component **2) + (horizontal_component **2)) ** (0.5)
+        angle_of_deflection = arctan(horizontal_component/vertical_component)
+        return speed_of_deflection,angle_of_deflection
 
 
+    def collision_with_sphere(self,second_angle_of_approach,second_velocity_of_approach,second_mass):
+        vertical_component_1 = self.u * sin(radians(self.angle_of_approach)) * self.e
+        horizontal_component_1 = self.u * cos(radians(self.angle_of_approach))
+        vertical_component_2 = second_velocity_of_approach * sin(radians(second_angle_of_approach)) * self.e
+        horizontal_component_2 = second_velocity_of_approach * cos(radians(second_angle_of_approach))
+
+        #(Parallel to the line of centres of the spheres)
+        parallel = EC1D(horizontal_component_1,self.e,self.mass)
+        clm_equation = parallel.clm(horizontal_component_2,second_mass)
+        restitution_equation = parallel.restitution_equation(horizontal_component_2)
+
+        #use matrices to solve simultaneously
+        simultaneous_equations = SimultaneousEquation2(clm_equation,restitution_equation)
+        new_horizontal_component_1,new_horizontal_component_2 = simultaneous_equations.solve_equation()
+
+        #As Vertical components are unchanged:
+        new_speed_1 = (new_horizontal_component_1 **2) + (vertical_component_1 **2)
+        new_speed_2 = (new_horizontal_component_2 **2) + (vertical_component_2 ** 2)
+
+        #Work out angles to the line of centres after the impact:
+        new_angle_1 = arctan(magnitude(vertical_component_1)/magnitude(new_horizontal_component_1))
+        new_angle_2 = arctan(magnitude(vertical_component_2)/magnitude(new_horizontal_component_2))
+
+        return new_speed_1,new_angle_1,new_speed_2,new_angle_2
 
 
 
-#question 4 exercise 4a further mechanics 1 workbook edexcel a level
-question_4= EC1D(4,0.2,2)
-print(question_4.collision_with_object(-6,6))
 
-#example 1 chapter 5 further mechanics 1 workbook edexcel a level
-example_1 = EC2D(60,0.25,1)
-print(f"Speed of rebound is : {round(example_1.speed_of_rebound(),5)}")
-print(f"Angle of deflection is : {round(example_1.angle_of_deflection(),5)}")
+
+model = EC2D(60,0.25,6,2)
+print(model.collision_with_sphere(0,0,4))
