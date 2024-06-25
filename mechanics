@@ -45,36 +45,55 @@ class TwoMatrix:
             return new_matrix
 
 
-class SimultaneousEquation2:
-    def __init__(self, equation_1, equation_2):
-        # assign variables so we can later on make a matrix
-        self.x1 = equation_1[0]
-        self.y1 = equation_1[1]
-        self.z1 = equation_1[2]
-        self.x2 = equation_2[0]
-        self.y2 = equation_2[1]
-        self.z2 = equation_2[2]
+class TwoMatrix:
+    def __init__(self,rows):
+        self.a = rows[0][0]
+        self.b = rows[0][1]
+        self.c = rows[1][0]
+        self.d = rows[1][1]
 
-    def assemble_matrix(self):  # assemble a matrix for the rhs, as the lhs will cancel upon multiplication with inverse
-        rhs = (
-            [self.z1],
-            [self.z2])
-        return rhs
+    def determinant(self):
+        return (self.a * self.d) - (self.b * self.c)
+
+    def inverse_matrix(self):
+        if self.determinant() == 0:
+            return "Matrix cannot be inverted as determinant is 0"
+        else:
+            new_a = self.d / self.determinant()
+            new_b = (-1 * self.b) / self.determinant()
+            new_c = (-1 * self.c) / self.determinant()
+            new_d = self.a / self.determinant()
+            # assemble the inverse matrix
+            new_matrix = (
+                [new_a, new_b],
+                [new_c, new_d])
+            return new_matrix
 
 
-    def solve_equation(self):
-        #assemble lhs into a 2x2 matrix
-        lhs = ([
-            [self.x1,self.y1],
-            [self.x2,self.y2]
-        ])
-        lhs_mat = TwoMatrix(lhs)
+def simultaneous_equation_2_variables(equation_1,equation_2):
+    #in the form x + y = k
+    x1 = equation_1[0]
+    y1 = equation_1[1]
+    k1 = equation_1[2]
+    x2 = equation_2[0]
+    y2 = equation_2[1]
+    k2 = equation_2[2]
 
-        inv_mat = lhs_mat.inverse_matrix()
-        rhs_mat = self.assemble_matrix()
-        x = (inv_mat[0][0] * rhs_mat[0][0]) + (inv_mat[0][1] * rhs_mat[1][0])
-        y = (inv_mat[1][0] * rhs_mat[0][0]) + (inv_mat[1][1] * rhs_mat[1][0])
-        return x, y
+    #Form a matrix for the lhs
+
+    lhs_matrix = TwoMatrix([
+        [x1,y1],
+        [x2,y2]
+    ])
+    inverse_matrix = lhs_matrix.inverse_matrix()
+
+    #Multiply both sides by the inverse matrix to solve
+
+    x = (inverse_matrix[0][0] * k1) + (inverse_matrix[0][1] * k2)
+    y = (inverse_matrix[1][0] * k1) + (inverse_matrix[1][1] * k2)
+
+    return x,y
+
 
 #Trig
 
@@ -159,8 +178,8 @@ class EC1D: #Assuming 🡪 is positive velocity ( as we are dealing with velocit
         x1,y1,z1= self.restitution_equation(second_initial_velocity)
         x2,y2,z2 = self.clm(second_initial_velocity,second_mass)
         #assemble a 2x2 matrix to solve the equation
-        matrix = SimultaneousEquation2([x1,y1,z1],[x2,y2,z2])
-        v1,v2 =  (matrix.solve_equation())
+
+        v1,v2 =  (simultaneous_equation_2_variables([x1,y1,z1],[x2,y2,z2]))
         return (f"Assuming that 🡪 is the positive direction,v1 = {v1} , v2 = {v2}")
 
     def collision_with_plane(self):
@@ -209,9 +228,9 @@ class EC2D:  # Elastic Collisions in 2d
         restitution_equation = parallel.restitution_equation(horizontal_component_2)
 
         #use matrices to solve simultaneously
-        simultaneous_equations = SimultaneousEquation2(clm_equation,restitution_equation)
-        new_horizontal_component_1,new_horizontal_component_2 = simultaneous_equations.solve_equation()
 
+        new_horizontal_component_1,new_horizontal_component_2 = simultaneous_equation_2_variables(clm_equation,restitution_equation)
+    
         #As Vertical components are unchanged:
         new_speed_1 = (new_horizontal_component_1 **2) + (vertical_component_1 **2)
         new_speed_2 = (new_horizontal_component_2 **2) + (vertical_component_2 ** 2)
