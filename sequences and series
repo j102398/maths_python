@@ -1,0 +1,71 @@
+#misc functions
+
+def magnitude(number): #returns |number|
+    if number < 0:
+        number *= -1
+    else:
+        pass
+    return number
+
+
+
+
+
+
+
+#arithmetic sequence in the form un = a + (n-1)D
+#WHERE a is the first term, n is the term number and d is the linear difference between terms
+
+
+class ArithmeticSequence:
+    def __init__(self,a,d):
+        self.a = a
+        self.d = d
+
+    def term(self,n):
+        term = self.a + ((n-1)*self.d)
+        return term
+
+#Arithmetic series
+
+class ArithmeticSeries:
+    def __init__(self,a,d):
+        self.a = a
+        self.d = d
+
+    def sum(self,n):
+        #summing up to n
+        summation = (0.5 * n) * ((2*self.a) + ((n-1)*d))
+        return summation
+
+#geometric sequence in the form un = a * r^(n-1)
+
+class GeometricSequence:
+    def __init__(self,a,r):
+        self.a = a
+        self.r = r
+
+    def term(self,n):
+        term = (self.a) * ((self.r)**(n-1))
+        return term
+
+#Geometric series and summing to infinity where applicable
+
+class GeometricSeries:
+    def __init__(self,a,r):
+        self.a = a
+        self.r = r
+
+    def sum(self,n):
+        sum = (self.a*(1-(self.r**(n)))) / (1-self.r)
+        return sum
+
+    def infinitysum(self):
+        #can only sum to infinity if |r| < 1
+        if magnitude(self.r) < 1:
+            sum = self.a / (1-self.r)
+            return sum
+        else:
+            return "|r| >= 1,cannot sum to infinity"
+
+
