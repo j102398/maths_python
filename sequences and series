@@ -1,4 +1,10 @@
-#misc functions
+#mathematical functions
+def ncr(n,r):
+    ncr = ((factorial(n)) / (factorial(r) * factorial(n-r)))
+    return ncr
+
+
+
 
 def magnitude(number): #returns |number|
     if number < 0:
@@ -43,7 +49,109 @@ def SieveOfEratosthenes(n):  #used for generating a list of prime numbers up to 
     # Return the list of prime numbers
     return prime_numbers_list
 
-print(SieveOfEratosthenes(120))
+#Mathematical functions needed for the Binomial expansion
+def factorial(number):
+    if number == 0:
+        return 1
+    else:
+        total = 1
+        for i in range(number, 0, -1):
+            total *= i
+
+        return total
+
+
+
+#functions for formatting
+def superscript(n):
+    n = str(n)
+    formatted_number = ""
+    for digit in n:
+        if digit == '0':
+            formatted_number += '⁰'
+        if digit == '1':
+            formatted_number += '¹'
+        if digit == '2':
+            formatted_number += '²'
+        if digit == '3':
+            formatted_number += '³'
+        if digit == '4':
+            formatted_number += '⁴'
+        if digit == '5':
+            formatted_number += '⁵'
+        if digit == '6':
+            formatted_number += '⁶'
+        if digit == '7':
+            formatted_number += '⁷'
+        if digit == '8':
+            formatted_number += '⁸'
+        if digit == '9':
+            formatted_number += '⁹'
+    return formatted_number
+
+
+
+
+
+
+class BinomialExpansion:
+    def __init__(self, variable_coefficient,variable, variable_exponent, constant, exponent):
+        self.variable = variable
+        self.variable_coefficient = float(variable_coefficient)
+        self.variable_exponent = variable_exponent
+        self.constant = float(constant)
+        self.exponent = int(exponent)
+
+    def coefficient_expansion(self):
+        coefficient_list = []
+        for k in range(self.exponent + 1):
+            coefficient = ncr(self.exponent, k) * (self.variable_coefficient ** (self.exponent - k)) * (
+                        self.constant ** k)
+            coefficient_list.append(coefficient)
+        return coefficient_list
+
+    def formatted_expansion(self):
+        coefficient_list = self.coefficient_expansion()
+
+        output = "" # what will be outputted
+        for index in range(0,len(coefficient_list)):
+            exponent = self.variable_exponent * (self.exponent - index)
+            coefficient = coefficient_list[index]
+            if coefficient > 0:
+                sign  = " +"
+                if int(coefficient) -coefficient == 0:  #if an integer, remove the .0 for formatting purposes
+                    coefficient = int(coefficient)
+                    #if it is a term with x in and has a 1 coefficient, remove the 1 as not neccessary
+                    if coefficient == 1 and index != (len(coefficient_list)-1):
+                         coefficient = ""
+
+            else:
+                sign = " -"
+                if int(coefficient) -coefficient == 0: #if an integer, remove the .0 for formatting purposes
+                    coefficient = int(coefficient)
+                    # if it is a term with x in and has a -1 coefficient, remove the 1 as not neccessary
+                    if coefficient == -1 and index != (len(coefficient_list)-1):
+                        coefficient = ""
+
+            if index == 0 and sign == " +": #if first term is positive, remove the sign as not needed
+                current_term = f"{coefficient}{self.variable}{superscript(exponent)}"
+
+            elif index == (len(coefficient_list)-2): #if x^1 term, remove exponent as not necessary
+                current_term = f"{sign}{coefficient}{self.variable}"
+
+
+            elif index == (len(coefficient_list)-1): #if the last term, it is a constant so remove the variable
+                current_term = f"{sign}{coefficient}"
+
+            else:
+                current_term = f"{sign}{coefficient}{self.variable}{superscript(exponent)}"
+            output += current_term #add the current term to the output
+        return output
+
+
+
+
+
 
 
 
