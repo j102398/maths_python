@@ -1,0 +1,71 @@
+import random
+
+def generate_key(length):
+    key = ""
+    for bit in range(length):
+        key += str(random.randint(0, 1))
+    return key
+
+def xor(message, key):
+    output = ""
+    for bit_1, bit_2 in zip(message, key):
+        if (bit_1 == "1" or bit_2 == "1") and bit_1 != bit_2:
+            output += "1"
+        else:
+            output += "0"
+    return output
+
+def bin_to_dec(binary):
+    decimal = 0
+    binary_last_index = len(binary) - 1
+    count = 0
+    for index in range(binary_last_index, -1, -1):
+        bit = int(binary[index])
+        decimal += (bit * (2 ** count))
+        count += 1
+    return decimal
+
+user_input = input("Enter your input for encryption: ")
+character_bin_list = []
+
+for character in user_input:
+    message_ord = ord(character)
+    message_bin = bin(message_ord)
+    message_bin_str = str(message_bin)[2:]  # Remove "0b" prefix
+    character_bin_list.append(message_bin_str)
+
+print(f"Character list : {character_bin_list}")
+
+key_list = []
+for binary_code in character_bin_list:
+    key = generate_key(len(binary_code))
+    key_list.append(key)
+
+print(f"Key list : {key_list}")
+
+encrypted_list = []
+for binary_code, key in zip(character_bin_list, key_list):
+    encrypted_code = xor(binary_code, key)
+    encrypted_list.append(encrypted_code)
+
+print(f"Encrypted list : {encrypted_list}")
+
+decrypted_list = []
+for encrypted_code, key in zip(encrypted_list, key_list):
+    decrypted_code = xor(encrypted_code, key)
+    decrypted_list.append(decrypted_code)
+
+print(f"Decrypted list: {decrypted_list}")
+
+encrypted_message = ""
+for encrypted_code in encrypted_list:
+    encrypted_code_dec = bin_to_dec(encrypted_code)
+    encrypted_message += chr(int(encrypted_code_dec))
+
+decrypted_message = ""
+for decrypted_code in decrypted_list:
+    decrypted_code_dec = bin_to_dec(decrypted_code)
+    decrypted_message += chr(int(decrypted_code_dec))
+
+print(f"Encrypted message : {encrypted_message}")
+print(f"Decrypted message : {decrypted_message}")
